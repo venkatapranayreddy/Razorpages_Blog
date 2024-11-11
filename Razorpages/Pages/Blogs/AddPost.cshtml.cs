@@ -30,7 +30,7 @@ namespace Razorpages.Pages.Blogs
         {
         }
 
-        public void OnPost()
+        public IActionResult OnPost()
         {
             var blogPost = new BlogPost()
             {
@@ -49,7 +49,7 @@ namespace Razorpages.Pages.Blogs
             _blogDBContext.SaveChanges();
 
             
-
+                return RedirectToPage("/Blogs/GetPost");
         }
     }
 }
