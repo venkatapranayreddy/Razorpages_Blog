@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Razorpages.Data;
 using Razorpages.Models;
@@ -24,9 +25,9 @@ namespace Razorpages.Pages.Blogs
             
         }
 
-        public void OnGet()
+        public  async Task OnGet()
         {
-            BlogPosts =  _blogDBContext.BlogPost.ToList();
+            BlogPosts =   await _blogDBContext.BlogPost.ToListAsync();
         }
     }
 }

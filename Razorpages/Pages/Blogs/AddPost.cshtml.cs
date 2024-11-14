@@ -30,7 +30,7 @@ namespace Razorpages.Pages.Blogs
         {
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPost()
         {
             var blogPost = new BlogPost()
             {
@@ -45,8 +45,8 @@ namespace Razorpages.Pages.Blogs
                 Visible = AddBlogPostRequest.Visible
             };
 
-            _blogDBContext.BlogPost.Add(blogPost);
-            _blogDBContext.SaveChanges();
+           await _blogDBContext.BlogPost.AddAsync(blogPost);
+           await  _blogDBContext.SaveChangesAsync();
 
             
                 return RedirectToPage("/Blogs/GetPost");
