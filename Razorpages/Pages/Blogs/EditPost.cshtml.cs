@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Razorpages.Data;
 using Razorpages.Models;
+using Razorpages.Repositories;
 
 namespace Razorpages.Pages.Blogs
 {
@@ -15,24 +16,24 @@ namespace Razorpages.Pages.Blogs
         [BindProperty]
        public  BlogPost BlogPost {get; set;}
 
-        private readonly BlogDBContext _blogDBContext;
+        private readonly IBlogRepository _iBlogRepository;
         private readonly ILogger<EditPost> _logger;
 
-        public EditPost(BlogDBContext blogDBContext, ILogger<EditPost> logger)
+        public EditPost(IBlogRepository iBlogRepository, ILogger<EditPost> logger)
         {
             _logger = logger;
-            _blogDBContext= blogDBContext;
+            _iBlogRepository = iBlogRepository;
         }
 
         public async Task OnGet(Guid id)
         {
-              BlogPost =   await _blogDBContext.BlogPost.FindAsync(id);
+              BlogPost =   await _iBlogRepository.GetAsync(id);
 
         }
 
         public async Task<IActionResult>  OnPostEdit()
         {
-            var ExistingPost = await  _blogDBContext.BlogPost.FindAsync(BlogPost.Id);
+            var ExistingPost = await  _iBlogRepository.GetAsync(BlogPost.Id);
 
             if(ExistingPost!= null)
             {
@@ -47,7 +48,7 @@ namespace Razorpages.Pages.Blogs
                 ExistingPost.Visible = BlogPost.Visible;
 
             }
-            _blogDBContext.SaveChanges();
+            await _iBlogRepository.UpdateAsync(ExistingPost);
 
             return RedirectToPage("/Blogs/GetPost");
         }
@@ -56,14 +57,7 @@ namespace Razorpages.Pages.Blogs
 
          public async Task<IActionResult> OnPostDelete()
         {    
-           var ExistingPost =  _blogDBContext.BlogPost.Find(BlogPost.Id);
-             if(ExistingPost!= null)
-             {
-                _blogDBContext.BlogPost.Remove(ExistingPost);
-                await _blogDBContext.SaveChangesAsync();
-
-                
-             }
+           var ExistingPost =  await _iBlogRepository.DeleteAsync(BlogPost.Id);
 
             return RedirectToPage("/Blogs/GetPost");
         }

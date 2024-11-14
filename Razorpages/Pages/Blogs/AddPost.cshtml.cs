@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Razorpages.Data;
 using Razorpages.Models;
+using Razorpages.Repositories;
 using Razorpages.ViewModels;
 
 namespace Razorpages.Pages.Blogs
@@ -16,14 +17,16 @@ namespace Razorpages.Pages.Blogs
     {
         [BindProperty]
         public AddBlogPost AddBlogPostRequest { get; set; }
-        private readonly BlogDBContext _blogDBContext;
+        // private readonly BlogDBContext _blogDBContext;
+        private readonly IBlogRepository _iBlogRepository;
+
         private readonly ILogger<AddPost> _logger;
 
 
-        public AddPost(BlogDBContext blogDBContext, ILogger<AddPost> logger)
+        public AddPost(IBlogRepository iBlogRepository, ILogger<AddPost> logger)
         {
             _logger = logger;
-            _blogDBContext = blogDBContext;
+            _iBlogRepository = iBlogRepository;
         }
 
         public void OnGet()
@@ -45,11 +48,10 @@ namespace Razorpages.Pages.Blogs
                 Visible = AddBlogPostRequest.Visible
             };
 
-           await _blogDBContext.BlogPost.AddAsync(blogPost);
-           await  _blogDBContext.SaveChangesAsync();
+           await _iBlogRepository.AddAsync(blogPost);
 
             
-                return RedirectToPage("/Blogs/GetPost");
+            return RedirectToPage("/Blogs/GetPost");
         }
     }
 }
